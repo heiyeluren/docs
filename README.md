@@ -6,7 +6,7 @@ Heiyeluren Documents List
 
 <li><a href="http://heiyeluren-doc.googlecode.com/files/Memcached-principles-and-use.pdf">Memcached原理和使用</a> (2009-01)
 </li>
-<li><a href-"http://heiyeluren-doc.googlecode.com/files/MySQL-Introduction-and-Performance-Optimization.pdf">MySQL介绍和优化分享</a> (2009-07)
+<li><a href-"https://raw.githubusercontent.com/heiyeluren/docs/master/files/MySQL-Introduction-and-Performance-Optimization.pdf">MySQL介绍和优化分享</a> (2009-07)
 </li>
 <li><a href="http://heiyeluren-doc.googlecode.com/files/PHP-Debug-Manual-public.pdf">PHP调试技术手册</a> (2010-06)
 </li>
