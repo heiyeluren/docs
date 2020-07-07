@@ -2,6 +2,8 @@ Heiyeluren Documents List
 =========
 黑夜路人文档中心
 
+说明：需要下载文档请访问 docs/files 目录
+
 <ul>
 
   <li>
