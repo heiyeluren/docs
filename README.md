@@ -27,7 +27,23 @@
 
 - [《Memcached原理和使用》](https://github.com/heiyeluren/docs/raw/master/files/Memcached-principles-and-use.pdf) (2009-01，腾讯内部分享)
 
--  ...
+-  ( 持续更新 )
 
+<br />
+<br />
 
+#
+
+<br />
+<br />
+
+###### 个人技术博客：https://blog.csdn.net/heiyeshuwu
+
+###### 个人技术公众号：( heiyeluren2021 )
+![image](https://raw.githubusercontent.com/heiyeluren/docs/master/imgs/heiyeluren-wx-public.png)
+
+<br />
+
+###### 联系黑夜路人个人微信：
+![image](https://raw.githubusercontent.com/heiyeluren/docs/master/imgs/heiyeluren-wx-prive-account.png)
 
