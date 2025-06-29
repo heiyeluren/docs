@@ -1,0 +1,485 @@
+app:
+  description: 智能内容审核与客服回复系统，自动检测敏感内容并提供专业客服回复
+  icon: 🛡️
+  icon_background: '#E3F2FD'
+  mode: workflow
+  name: 客服内容处理系统
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openrouter:0.0.8@c6508dfd6c5c6e7aa0c185df370b07fd093001df42xxxxxxxxxxxxxxxxxxxxx
+kind: app
+version: 0.1.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      enabled: false
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: llm
+      id: start-content-detector
+      source: start
+      sourceHandle: source
+      target: content-detector
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: if-else
+      id: content-detector-sensitive-check
+      source: content-detector
+      sourceHandle: source
+      target: sensitive-check
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: llm
+      id: sensitive-check-sensitive-classifier
+      source: sensitive-check
+      sourceHandle: 'true'
+      target: sensitive-classifier
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: llm
+      id: sensitive-check-service-classifier
+      source: sensitive-check
+      sourceHandle: 'false'
+      target: service-classifier
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: end
+      id: sensitive-classifier-violation-end
+      source: sensitive-classifier
+      sourceHandle: source
+      target: violation-end
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: llm
+      id: service-classifier-reply-generator
+      source: service-classifier
+      sourceHandle: source
+      target: reply-generator
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: end
+      id: reply-generator-service-end
+      source: reply-generator
+      sourceHandle: source
+      target: service-end
+      targetHandle: target
+      type: custom
+    nodes:
+    - data:
+        desc: 工作流开始节点，接收用户输入的文本内容
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 用户输入内容
+          max_length: 2000
+          required: true
+          type: text-input
+          variable: user_content
+        - label: 用户ID
+          max_length: 100
+          required: false
+          type: text-input
+          variable: user_id
+        - label: 渠道来源
+          max_length: 50
+          required: false
+          type: text-input
+          variable: channel_source
+      height: 200
+      id: start
+      position:
+        x: 30
+        y: 300
+      positionAbsolute:
+        x: 30
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 检测用户输入内容是否包含敏感信息
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: openai/gpt-4o-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: detector-system-prompt
+          role: system
+          text: '你是一个专业的内容安全审核专家，负责检测文本中的敏感内容。
+
+            ## 检测范围
+
+            请检测以下类型的敏感内容：
+            1. **政治敏感内容** - 涉及政治敏感话题、政治人物攻击等
+            2. **色情暴力内容** - 包含色情、暴力、血腥等不当内容
+            3. **违法违规内容** - 涉及违法犯罪、欺诈、赌博等违法行为
+            4. **恶意攻击内容** - 人身攻击、歧视、仇恨言论等
+            5. **垃圾广告内容** - 恶意营销、垃圾广告、诈骗信息等
+            6. **其他有害内容** - 自残、极端思想等有害信息
+
+            ## 输出要求
+
+            请严格按照以下格式输出，只输出检测结果：
+            安全|敏感'
+        - id: detector-user-prompt
+          role: user
+          text: '请检测以下内容是否包含敏感信息：
+
+            **用户内容：**{{#start.user_content#}}
+
+            **渠道来源：**{{#start.channel_source#}}
+
+            请仔细分析内容，判断是否包含敏感信息，只输出"安全"或"敏感"。'
+        selected: false
+        title: 敏感内容检测
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 134
+      id: content-detector
+      position:
+        x: 334
+        y: 300
+      positionAbsolute:
+        x: 334
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: sensitive-condition
+            value: 敏感
+            variable_selector:
+            - content-detector
+            - text
+          id: 'true'
+          logical_operator: and
+        desc: 判断内容是否包含敏感信息，决定后续处理流程
+        logical_operator: and
+        selected: false
+        title: 敏感内容判断
+        type: if-else
+      height: 170
+      id: sensitive-check
+      position:
+        x: 638
+        y: 300
+      positionAbsolute:
+        x: 638
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 对检测到的敏感内容进行详细分类并输出违规提示
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: openai/gpt-4o-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: sensitive-system-prompt
+          role: system
+          text: '你是一个专业的敏感内容分类专家，负责对敏感内容进行详细分类。
+
+            ## 分类标准
+
+            请将敏感内容分类为以下类型：
+            1. **政治敏感** - 涉及政治敏感话题
+            2. **色情暴力** - 包含不当内容
+            3. **违法违规** - 涉及违法行为
+            4. **恶意攻击** - 人身攻击言论
+            5. **垃圾广告** - 恶意营销信息
+            6. **其他有害** - 其他有害信息
+
+            ## 输出格式
+
+            请严格按照以下JSON格式输出：
+
+            {
+              "violation_type": "具体违规类型",
+              "violation_detail": "详细违规说明",
+              "risk_level": "高风险|中风险|低风险",
+              "system_response": "很抱歉，您的内容包含不当信息，无法为您提供服务。请遵守平台使用规范。",
+              "processing_time": "2024-12-29 18:30:00",
+              "user_id": "用户ID",
+              "channel_source": "渠道来源"
+            }'
+        - id: sensitive-user-prompt
+          role: user
+          text: '请对以下敏感内容进行详细分类：
+
+            **用户内容：**{{#start.user_content#}}
+
+            **用户ID：**{{#start.user_id#}}
+
+            **渠道来源：**{{#start.channel_source#}}
+
+            **检测结果：**{{#content-detector.text#}}
+
+            请分析敏感内容类型，设置风险等级，并生成系统回复，只输出JSON格式结果。'
+        selected: false
+        title: 敏感内容分类
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 134
+      id: sensitive-classifier
+      position:
+        x: 942
+        y: 150
+      positionAbsolute:
+        x: 942
+        y: 150
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 对正常内容进行客服问题分类
+        model:
+          completion_params:
+            temperature: 0.2
+          mode: chat
+          name: openai/gpt-4o-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: service-system-prompt
+          role: system
+          text: '你是一个专业的客服问题分类专家，负责对用户咨询进行准确分类。
+
+            ## 分类标准
+
+            请将用户问题分类为以下类型之一：
+            1. **产品咨询** - 关于产品功能、特性、使用方法的咨询
+            2. **技术支持** - 技术问题、故障报告、使用困难等
+            3. **账户问题** - 登录、注册、密码、个人信息相关
+            4. **订单相关** - 购买、支付、退款、发货等订单问题
+            5. **投诉建议** - 意见反馈、投诉、改进建议等
+            6. **其他咨询** - 不属于以上分类的其他问题
+
+            ## 输出格式
+
+            请严格按照以下格式输出分类结果：
+            产品咨询|技术支持|账户问题|订单相关|投诉建议|其他咨询'
+        - id: service-user-prompt
+          role: user
+          text: '请对以下用户问题进行分类：
+
+            **用户内容：**{{#start.user_content#}}
+
+            **用户ID：**{{#start.user_id#}}
+
+            **渠道来源：**{{#start.channel_source#}}
+
+            请分析用户问题的核心需求，选择最合适的分类，只输出分类结果。'
+        selected: false
+        title: 客服问题分类
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 134
+      id: service-classifier
+      position:
+        x: 942
+        y: 450
+      positionAbsolute:
+        x: 942
+        y: 450
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 根据问题分类生成专业的客服回复
+        model:
+          completion_params:
+            temperature: 0.3
+          mode: chat
+          name: openai/gpt-4o-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: reply-system-prompt
+          role: system
+          text: '你是一个专业的客服回复生成专家，负责根据问题分类生成合适的客服回复。
+
+            ## 回复原则
+
+            1. **专业性** - 回复内容专业、准确、有帮助
+            2. **友好性** - 语气亲和、礼貌、体现关怀
+            3. **针对性** - 根据问题类型提供针对性解决方案
+            4. **完整性** - 回复包含问题解答和后续指引
+
+            ## 回复风格
+
+            - 使用礼貌、专业的语言
+            - 体现对用户的理解和关怀
+            - 提供具体的解决方案或指引
+            - 必要时提供联系方式或后续步骤
+
+            ## 输出格式
+
+            请严格按照以下JSON格式输出：
+
+            {
+              "question_type": "问题分类",
+              "reply_content": "详细的客服回复内容",
+              "priority_level": "高|中|低",
+              "follow_up_action": "后续处理建议",
+              "estimated_resolution_time": "预计处理时间",
+              "contact_info": "联系方式或相关链接",
+              "processing_time": "2024-12-29 18:30:00",
+              "user_id": "用户ID",
+              "channel_source": "渠道来源"
+            }'
+        - id: reply-user-prompt
+          role: user
+          text: '请根据以下信息生成专业的客服回复：
+
+            **用户内容：**{{#start.user_content#}}
+
+            **用户ID：**{{#start.user_id#}}
+
+            **渠道来源：**{{#start.channel_source#}}
+
+            **问题分类：**{{#service-classifier.text#}}
+
+            请根据问题分类生成专业、友好、有帮助的客服回复，只输出JSON格式结果。'
+        selected: false
+        title: 智能回复生成
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 134
+      id: reply-generator
+      position:
+        x: 1246
+        y: 450
+      positionAbsolute:
+        x: 1246
+        y: 450
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 敏感内容处理结束节点，输出违规处理结果
+        outputs:
+        - value_selector:
+          - sensitive-classifier
+          - text
+          variable: violation_result
+        selected: false
+        title: 违规处理结束
+        type: end
+      height: 134
+      id: violation-end
+      position:
+        x: 1246
+        y: 150
+      positionAbsolute:
+        x: 1246
+        y: 150
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 客服回复处理结束节点，输出客服回复结果
+        outputs:
+        - value_selector:
+          - reply-generator
+          - text
+          variable: service_reply
+        selected: false
+        title: 客服回复结束
+        type: end
+      height: 134
+      id: service-end
+      position:
+        x: 1550
+        y: 450
+      positionAbsolute:
+        x: 1550
+        y: 450
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 100
+      y: -50
+      zoom: 0.8
