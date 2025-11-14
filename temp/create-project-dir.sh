@@ -52,7 +52,7 @@ print_error() {
 print_welcome() {
     echo ""
     echo -e "${GREEN}========================================${NC}"
-    echo -e "${GREEN}   项目目录结构自动创建工具${NC}"
+    echo -e "${GREEN}   鲁班2.0 - 项目目录结构自动创建工具${NC}"
     echo -e "${GREEN}========================================${NC}"
     echo ""
 }
@@ -89,7 +89,9 @@ get_project_name() {
 # 创建目录结构
 create_directory_structure() {
     local project_name=$1
-    local base_dir="project_${project_name}"
+    # 获取当前日期的月日（MMDD格式）
+    local date_mmdd=$(date '+%m%d')
+    local base_dir="super-project-${date_mmdd}-${project_name}"
     
     print_info "开始创建目录结构..."
     
@@ -113,12 +115,12 @@ create_directory_structure() {
     
     # 创建子目录
     mkdir -p "$base_dir/.luban"
-    mkdir -p "$base_dir/gil_${project_name}_api/docs/ai-generates"
-    mkdir -p "$base_dir/gil_${project_name}_fe/docs/ai-generates"
-    mkdir -p "$base_dir/gil_api_test/docs/ai-generates"
+    mkdir -p "$base_dir/api-super-${project_name}/docs/ai-generates"
+    mkdir -p "$base_dir/fe-super-${project_name}/docs/ai-generates"
+    mkdir -p "$base_dir/test-api-${project_name}/docs/ai-generates"
     
     # 创建 README 文件
-    create_readme_files "$base_dir" "$project_name"
+    create_readme_files "$base_dir" "$project_name" "$date_mmdd"
     
     print_success "目录结构创建成功！"
 }
@@ -127,6 +129,7 @@ create_directory_structure() {
 create_readme_files() {
     local base_dir=$1
     local project_name=$2
+    local date_mmdd=$3
     
     # 主 README
     cat > "$base_dir/README.md" << EOF
@@ -138,29 +141,29 @@ create_readme_files() {
 ## 目录结构
 
 \`\`\`
-project_${project_name}/
-├── .luban/                      # Luban 配置目录
-├── gil_${project_name}_api/    # 后端 API 目录
-│   └── docs/                    # API 文档目录
-│       └── ai-generates/        # AI 生成的文档
-├── gil_${project_name}_fe/     # 前端项目目录
-│   └── docs/                    # 前端文档目录
-│       └── ai-generates/        # AI 生成的文档
-└── gil_api_test/                # API 测试目录
-    └── docs/                    # 测试文档目录
-        └── ai-generates/        # AI 生成的文档
+super-project-${date_mmdd}-${project_name}/
+├── .luban/                          # Luban 配置目录
+├── api-super-${project_name}/      # 后端 API 目录
+│   └── docs/                        # API 文档目录
+│       └── ai-generates/            # AI 生成的文档
+├── fe-super-${project_name}/       # 前端项目目录
+│   └── docs/                        # 前端文档目录
+│       └── ai-generates/            # AI 生成的文档
+└── test-api-${project_name}/       # API 测试目录
+    └── docs/                        # 测试文档目录
+        └── ai-generates/            # AI 生成的文档
 \`\`\`
 
 ## 说明
 
 - **.luban/**: 存放 Luban 相关配置文件
-- **gil_${project_name}_api/**: 后端 API 服务代码
+- **api-super-${project_name}/**: 后端 API 服务代码
   - **docs/**: API 相关文档
   - **docs/ai-generates/**: AI 自动生成的文档和代码
-- **gil_${project_name}_fe/**: 前端应用代码
+- **fe-super-${project_name}/**: 前端应用代码
   - **docs/**: 前端相关文档
   - **docs/ai-generates/**: AI 自动生成的文档和代码
-- **gil_api_test/**: API 自动化测试代码
+- **test-api-${project_name}/**: API 自动化测试代码
   - **docs/**: 测试相关文档
   - **docs/ai-generates/**: AI 自动生成的测试文档
 
@@ -170,7 +173,7 @@ EOF
     echo "# Luban 配置目录" > "$base_dir/.luban/README.md"
     
     # API 目录 README
-    cat > "$base_dir/gil_${project_name}_api/README.md" << EOF
+    cat > "$base_dir/api-super-${project_name}/README.md" << EOF
 # ${project_name} API 服务
 
 ## 目录说明
@@ -181,7 +184,7 @@ EOF
 EOF
 
     # 前端目录 README
-    cat > "$base_dir/gil_${project_name}_fe/README.md" << EOF
+    cat > "$base_dir/fe-super-${project_name}/README.md" << EOF
 # ${project_name} 前端应用
 
 ## 目录说明
@@ -192,8 +195,8 @@ EOF
 EOF
 
     # 测试目录 README
-    cat > "$base_dir/gil_api_test/README.md" << EOF
-# API 测试
+    cat > "$base_dir/test-api-${project_name}/README.md" << EOF
+# ${project_name} API 测试
 
 ## 目录说明
 
@@ -203,14 +206,14 @@ EOF
 EOF
 
     # docs 目录的 README
-    echo "# API 文档" > "$base_dir/gil_${project_name}_api/docs/README.md"
-    echo "# 前端文档" > "$base_dir/gil_${project_name}_fe/docs/README.md"
-    echo "# 测试文档" > "$base_dir/gil_api_test/docs/README.md"
+    echo "# API 文档" > "$base_dir/api-super-${project_name}/docs/README.md"
+    echo "# 前端文档" > "$base_dir/fe-super-${project_name}/docs/README.md"
+    echo "# 测试文档" > "$base_dir/test-api-${project_name}/docs/README.md"
     
     # ai-generates 目录的 README
-    echo "# AI 生成的文档和代码" > "$base_dir/gil_${project_name}_api/docs/ai-generates/README.md"
-    echo "# AI 生成的文档和代码" > "$base_dir/gil_${project_name}_fe/docs/ai-generates/README.md"
-    echo "# AI 生成的测试文档" > "$base_dir/gil_api_test/docs/ai-generates/README.md"
+    echo "# AI 生成的文档和代码" > "$base_dir/api-super-${project_name}/docs/ai-generates/README.md"
+    echo "# AI 生成的文档和代码" > "$base_dir/fe-super-${project_name}/docs/ai-generates/README.md"
+    echo "# AI 生成的测试文档" > "$base_dir/test-api-${project_name}/docs/ai-generates/README.md"
 }
 
 # 显示目录树
@@ -234,24 +237,26 @@ show_directory_tree() {
     
     # 使用 tree 命令（如果可用）或手动显示
     if command -v tree &> /dev/null; then
-        tree -L 3 "$base_dir"
+        tree -L 4 "$base_dir"
     else
-        echo "project_${project_name}/"
+        # 获取完整路径
+        local full_path=$(cd "$base_dir" && pwd)
+        echo "$full_path"
         echo "├── .luban/"
         echo "│   └── README.md"
-        echo "├── gil_${project_name}_api/"
+        echo "├── api-super-${project_name}/"
         echo "│   ├── README.md"
         echo "│   └── docs/"
         echo "│       ├── README.md"
         echo "│       └── ai-generates/"
         echo "│           └── README.md"
-        echo "├── gil_${project_name}_fe/"
+        echo "├── fe-super-${project_name}/"
         echo "│   ├── README.md"
         echo "│   └── docs/"
         echo "│       ├── README.md"
         echo "│       └── ai-generates/"
         echo "│           └── README.md"
-        echo "├── gil_api_test/"
+        echo "├── test-api-${project_name}/"
         echo "│   ├── README.md"
         echo "│   └── docs/"
         echo "│       ├── README.md"
@@ -264,7 +269,7 @@ show_directory_tree() {
     print_success "所有目录和文件已创建完成！"
     echo ""
     print_info "下一步操作:"
-    echo "  1. cd project_${project_name}"
+    echo "  1. cd $base_dir"
     echo "  2. 开始开发你的项目"
     echo ""
 }
@@ -282,8 +287,11 @@ main() {
     local project_name=$(get_project_name)
     echo ""
     
+    # 获取日期用于显示
+    local date_mmdd=$(date '+%m%d')
+    
     # 确认信息
-    print_info "即将创建项目: project_${project_name}"
+    print_info "即将创建项目: super-project-${date_mmdd}-${project_name}"
     echo -e "${YELLOW}确认创建? (Y/n):${NC}" >&2
     read -p "> " confirm
     
@@ -298,9 +306,8 @@ main() {
     create_directory_structure "$project_name"
     
     # 显示结果
-    show_directory_tree "project_${project_name}" "$project_name"
+    show_directory_tree "super-project-${date_mmdd}-${project_name}" "$project_name"
 }
 
 # 运行主函数
 main
-
