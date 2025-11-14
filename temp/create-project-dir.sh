@@ -2,7 +2,7 @@
 
 # 跨平台项目目录结构创建脚本
 # 支持 macOS, Linux, Windows (Git Bash/WSL)
-# 使用方法: bash create-project.sh 或 curl -sSL <url> | bash
+# 使用方法: bash create-project-dir.sh 或 curl -sSL <url> | bash
 
 set -e
 
@@ -113,9 +113,9 @@ create_directory_structure() {
     
     # 创建子目录
     mkdir -p "$base_dir/.luban"
-    mkdir -p "$base_dir/gil_${project_name}_api"
-    mkdir -p "$base_dir/gil_${project_name}_fe"
-    mkdir -p "$base_dir/gil_api_test"
+    mkdir -p "$base_dir/gil_${project_name}_api/docs/ai-generates"
+    mkdir -p "$base_dir/gil_${project_name}_fe/docs/ai-generates"
+    mkdir -p "$base_dir/gil_api_test/docs/ai-generates"
     
     # 创建 README 文件
     create_readme_files "$base_dir" "$project_name"
@@ -139,26 +139,78 @@ create_readme_files() {
 
 \`\`\`
 project_${project_name}/
-├── .luban/              # Luban 配置目录
+├── .luban/                      # Luban 配置目录
 ├── gil_${project_name}_api/    # 后端 API 目录
+│   └── docs/                    # API 文档目录
+│       └── ai-generates/        # AI 生成的文档
 ├── gil_${project_name}_fe/     # 前端项目目录
-└── gil_api_test/        # API 测试目录
+│   └── docs/                    # 前端文档目录
+│       └── ai-generates/        # AI 生成的文档
+└── gil_api_test/                # API 测试目录
+    └── docs/                    # 测试文档目录
+        └── ai-generates/        # AI 生成的文档
 \`\`\`
 
 ## 说明
 
 - **.luban/**: 存放 Luban 相关配置文件
 - **gil_${project_name}_api/**: 后端 API 服务代码
+  - **docs/**: API 相关文档
+  - **docs/ai-generates/**: AI 自动生成的文档和代码
 - **gil_${project_name}_fe/**: 前端应用代码
+  - **docs/**: 前端相关文档
+  - **docs/ai-generates/**: AI 自动生成的文档和代码
 - **gil_api_test/**: API 自动化测试代码
+  - **docs/**: 测试相关文档
+  - **docs/ai-generates/**: AI 自动生成的测试文档
 
 EOF
 
     # 各子目录的 README
     echo "# Luban 配置目录" > "$base_dir/.luban/README.md"
-    echo "# ${project_name} API 服务" > "$base_dir/gil_${project_name}_api/README.md"
-    echo "# ${project_name} 前端应用" > "$base_dir/gil_${project_name}_fe/README.md"
-    echo "# API 测试" > "$base_dir/gil_api_test/README.md"
+    
+    # API 目录 README
+    cat > "$base_dir/gil_${project_name}_api/README.md" << EOF
+# ${project_name} API 服务
+
+## 目录说明
+
+- **docs/**: API 相关文档
+- **docs/ai-generates/**: AI 自动生成的文档和代码
+
+EOF
+
+    # 前端目录 README
+    cat > "$base_dir/gil_${project_name}_fe/README.md" << EOF
+# ${project_name} 前端应用
+
+## 目录说明
+
+- **docs/**: 前端相关文档
+- **docs/ai-generates/**: AI 自动生成的文档和代码
+
+EOF
+
+    # 测试目录 README
+    cat > "$base_dir/gil_api_test/README.md" << EOF
+# API 测试
+
+## 目录说明
+
+- **docs/**: 测试相关文档
+- **docs/ai-generates/**: AI 自动生成的测试文档
+
+EOF
+
+    # docs 目录的 README
+    echo "# API 文档" > "$base_dir/gil_${project_name}_api/docs/README.md"
+    echo "# 前端文档" > "$base_dir/gil_${project_name}_fe/docs/README.md"
+    echo "# 测试文档" > "$base_dir/gil_api_test/docs/README.md"
+    
+    # ai-generates 目录的 README
+    echo "# AI 生成的文档和代码" > "$base_dir/gil_${project_name}_api/docs/ai-generates/README.md"
+    echo "# AI 生成的文档和代码" > "$base_dir/gil_${project_name}_fe/docs/ai-generates/README.md"
+    echo "# AI 生成的测试文档" > "$base_dir/gil_api_test/docs/ai-generates/README.md"
 }
 
 # 显示目录树
@@ -182,17 +234,29 @@ show_directory_tree() {
     
     # 使用 tree 命令（如果可用）或手动显示
     if command -v tree &> /dev/null; then
-        tree -L 2 "$base_dir"
+        tree -L 3 "$base_dir"
     else
         echo "project_${project_name}/"
         echo "├── .luban/"
         echo "│   └── README.md"
         echo "├── gil_${project_name}_api/"
-        echo "│   └── README.md"
+        echo "│   ├── README.md"
+        echo "│   └── docs/"
+        echo "│       ├── README.md"
+        echo "│       └── ai-generates/"
+        echo "│           └── README.md"
         echo "├── gil_${project_name}_fe/"
-        echo "│   └── README.md"
+        echo "│   ├── README.md"
+        echo "│   └── docs/"
+        echo "│       ├── README.md"
+        echo "│       └── ai-generates/"
+        echo "│           └── README.md"
         echo "├── gil_api_test/"
-        echo "│   └── README.md"
+        echo "│   ├── README.md"
+        echo "│   └── docs/"
+        echo "│       ├── README.md"
+        echo "│       └── ai-generates/"
+        echo "│           └── README.md"
         echo "└── README.md"
     fi
     
@@ -239,4 +303,3 @@ main() {
 
 # 运行主函数
 main
-
