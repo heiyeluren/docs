@@ -115,6 +115,7 @@ create_directory_structure() {
     
     # 创建子目录
     mkdir -p "$base_dir/.luban"
+    mkdir -p "$base_dir/docs/ai-generates"
     mkdir -p "$base_dir/api-super-${project_name}/docs/ai-generates"
     mkdir -p "$base_dir/fe-super-${project_name}/docs/ai-generates"
     mkdir -p "$base_dir/test-api-${project_name}/docs/ai-generates"
@@ -143,6 +144,8 @@ create_readme_files() {
 \`\`\`
 super-project-${date_mmdd}-${project_name}/
 ├── .luban/                          # Luban 配置目录
+├── docs/                            # 项目文档目录
+│   └── ai-generates/                # AI 生成的项目文档
 ├── api-super-${project_name}/      # 后端 API 目录
 │   └── docs/                        # API 文档目录
 │       └── ai-generates/            # AI 生成的文档
@@ -157,6 +160,8 @@ super-project-${date_mmdd}-${project_name}/
 ## 说明
 
 - **.luban/**: 存放 Luban 相关配置文件
+- **docs/**: 项目整体文档
+  - **ai-generates/**: AI 自动生成的项目文档
 - **api-super-${project_name}/**: 后端 API 服务代码
   - **docs/**: API 相关文档
   - **docs/ai-generates/**: AI 自动生成的文档和代码
@@ -171,6 +176,10 @@ EOF
 
     # 各子目录的 README
     echo "# Luban 配置目录" > "$base_dir/.luban/README.md"
+    
+    # 项目 docs 目录的 README
+    echo "# 项目文档" > "$base_dir/docs/README.md"
+    echo "# AI 生成的项目文档" > "$base_dir/docs/ai-generates/README.md"
     
     # API 目录 README
     cat > "$base_dir/api-super-${project_name}/README.md" << EOF
@@ -244,6 +253,10 @@ show_directory_tree() {
         echo "$full_path"
         echo "├── .luban/"
         echo "│   └── README.md"
+        echo "├── docs/"
+        echo "│   ├── README.md"
+        echo "│   └── ai-generates/"
+        echo "│       └── README.md"
         echo "├── api-super-${project_name}/"
         echo "│   ├── README.md"
         echo "│   └── docs/"
