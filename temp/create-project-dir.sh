@@ -52,7 +52,8 @@ print_error() {
 print_welcome() {
     echo ""
     echo -e "${GREEN}========================================${NC}"
-    echo -e "${GREEN}   鲁班2.0 - 项目目录结构自动创建工具${NC}"
+    echo -e "${GREEN}      孔明 - AI 基建平台${NC}"
+    echo -e "${GREEN}   项目目录结构自动创建工具${NC}"
     echo -e "${GREEN}========================================${NC}"
     echo ""
 }
@@ -115,6 +116,11 @@ create_directory_structure() {
     
     # 创建子目录
     mkdir -p "$base_dir/.luban"
+    mkdir -p "$base_dir/.km"
+    mkdir -p "$base_dir/config/dev"
+    mkdir -p "$base_dir/config/test"
+    mkdir -p "$base_dir/config/gray"
+    mkdir -p "$base_dir/config/prod"
     mkdir -p "$base_dir/docs/ai-generates"
     mkdir -p "$base_dir/api-super-${project_name}/docs/ai-generates"
     mkdir -p "$base_dir/fe-super-${project_name}/docs/ai-generates"
@@ -144,6 +150,12 @@ create_readme_files() {
 \`\`\`
 super-project-${date_mmdd}-${project_name}/
 ├── .luban/                          # Luban 配置目录
+├── .km/                             # 孔明 AI 基建平台 DevOps 工具
+├── config/                          # 配置文件目录
+│   ├── dev/                         # 开发环境配置
+│   ├── test/                        # 测试环境配置
+│   ├── gray/                        # 灰度环境配置
+│   └── prod/                        # 生产环境配置
 ├── docs/                            # 项目文档目录
 │   └── ai-generates/                # AI 生成的项目文档
 ├── api-super-${project_name}/      # 后端 API 目录
@@ -160,6 +172,12 @@ super-project-${date_mmdd}-${project_name}/
 ## 说明
 
 - **.luban/**: 存放 Luban 相关配置文件
+- **.km/**: 孔明 AI 基建平台的基础 DevOps 工具
+- **config/**: 配置文件目录
+  - **dev/**: 开发环境配置
+  - **test/**: 测试环境配置
+  - **gray/**: 灰度环境配置
+  - **prod/**: 生产环境配置
 - **docs/**: 项目整体文档
   - **ai-generates/**: AI 自动生成的项目文档
 - **api-super-${project_name}/**: 后端 API 服务代码
@@ -176,6 +194,25 @@ EOF
 
     # 各子目录的 README
     echo "# Luban 配置目录" > "$base_dir/.luban/README.md"
+    echo "# 孔明 AI 基建平台 DevOps 工具" > "$base_dir/.km/README.md"
+    
+    # config 目录的 README
+    cat > "$base_dir/config/README.md" << EOF
+# 配置文件目录
+
+## 环境说明
+
+- **dev/**: 开发环境配置
+- **test/**: 测试环境配置
+- **gray/**: 灰度环境配置
+- **prod/**: 生产环境配置
+
+EOF
+    
+    echo "# 开发环境配置" > "$base_dir/config/dev/README.md"
+    echo "# 测试环境配置" > "$base_dir/config/test/README.md"
+    echo "# 灰度环境配置" > "$base_dir/config/gray/README.md"
+    echo "# 生产环境配置" > "$base_dir/config/prod/README.md"
     
     # 项目 docs 目录的 README
     echo "# 项目文档" > "$base_dir/docs/README.md"
@@ -253,6 +290,18 @@ show_directory_tree() {
         echo "$full_path"
         echo "├── .luban/"
         echo "│   └── README.md"
+        echo "├── .km/"
+        echo "│   └── README.md"
+        echo "├── config/"
+        echo "│   ├── README.md"
+        echo "│   ├── dev/"
+        echo "│   │   └── README.md"
+        echo "│   ├── test/"
+        echo "│   │   └── README.md"
+        echo "│   ├── gray/"
+        echo "│   │   └── README.md"
+        echo "│   └── prod/"
+        echo "│       └── README.md"
         echo "├── docs/"
         echo "│   ├── README.md"
         echo "│   └── ai-generates/"
