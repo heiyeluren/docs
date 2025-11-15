@@ -92,7 +92,7 @@ create_directory_structure() {
     local project_name=$1
     # 获取当前日期的月日（MMDD格式）
     local date_mmdd=$(date '+%m%d')
-    local base_dir="super-project-${date_mmdd}-${project_name}"
+    local base_dir="km-project-${date_mmdd}-${project_name}"
     
     print_info "开始创建目录结构..."
     
@@ -122,9 +122,9 @@ create_directory_structure() {
     mkdir -p "$base_dir/configs/gray"
     mkdir -p "$base_dir/configs/prod"
     mkdir -p "$base_dir/docs/ai-generates"
-    mkdir -p "$base_dir/api-super-${project_name}/docs/ai-generates"
-    mkdir -p "$base_dir/fe-super-${project_name}/docs/ai-generates"
-    mkdir -p "$base_dir/test-api-${project_name}/docs/ai-generates"
+    mkdir -p "$base_dir/api/docs/ai-generates"
+    mkdir -p "$base_dir/fe/docs/ai-generates"
+    mkdir -p "$base_dir/test-api/docs/ai-generates"
     
     # 创建 README 文件
     create_readme_files "$base_dir" "$project_name" "$date_mmdd"
@@ -148,7 +148,7 @@ create_readme_files() {
 ## 目录结构
 
 \`\`\`
-super-project-${date_mmdd}-${project_name}/
+km-project-${date_mmdd}-${project_name}/
 ├── .luban/                          # Luban 配置目录
 ├── .km/                             # 孔明 AI 基建平台 DevOps 工具
 ├── configs/                         # 配置文件目录
@@ -158,13 +158,13 @@ super-project-${date_mmdd}-${project_name}/
 │   └── prod/                        # 生产环境配置
 ├── docs/                            # 项目文档目录
 │   └── ai-generates/                # AI 生成的项目文档
-├── api-super-${project_name}/      # 后端 API 目录
+├── api/                             # 后端 API 目录
 │   └── docs/                        # API 文档目录
 │       └── ai-generates/            # AI 生成的文档
-├── fe-super-${project_name}/       # 前端项目目录
+├── fe/                              # 前端项目目录
 │   └── docs/                        # 前端文档目录
 │       └── ai-generates/            # AI 生成的文档
-└── test-api-${project_name}/       # API 测试目录
+└── test-api/                        # API 测试目录
     └── docs/                        # 测试文档目录
         └── ai-generates/            # AI 生成的文档
 \`\`\`
@@ -180,13 +180,13 @@ super-project-${date_mmdd}-${project_name}/
   - **prod/**: 生产环境配置
 - **docs/**: 项目整体文档
   - **ai-generates/**: AI 自动生成的项目文档
-- **api-super-${project_name}/**: 后端 API 服务代码
+- **api/**: 后端 API 服务代码
   - **docs/**: API 相关文档
   - **docs/ai-generates/**: AI 自动生成的文档和代码
-- **fe-super-${project_name}/**: 前端应用代码
+- **fe/**: 前端应用代码
   - **docs/**: 前端相关文档
   - **docs/ai-generates/**: AI 自动生成的文档和代码
-- **test-api-${project_name}/**: API 自动化测试代码
+- **test-api/**: API 自动化测试代码
   - **docs/**: 测试相关文档
   - **docs/ai-generates/**: AI 自动生成的测试文档
 
@@ -219,7 +219,7 @@ EOF
     echo "# AI 生成的项目文档" > "$base_dir/docs/ai-generates/README.md"
     
     # API 目录 README
-    cat > "$base_dir/api-super-${project_name}/README.md" << EOF
+    cat > "$base_dir/api/README.md" << EOF
 # ${project_name} API 服务
 
 ## 目录说明
@@ -230,7 +230,7 @@ EOF
 EOF
 
     # 前端目录 README
-    cat > "$base_dir/fe-super-${project_name}/README.md" << EOF
+    cat > "$base_dir/fe/README.md" << EOF
 # ${project_name} 前端应用
 
 ## 目录说明
@@ -241,7 +241,7 @@ EOF
 EOF
 
     # 测试目录 README
-    cat > "$base_dir/test-api-${project_name}/README.md" << EOF
+    cat > "$base_dir/test-api/README.md" << EOF
 # ${project_name} API 测试
 
 ## 目录说明
@@ -252,14 +252,14 @@ EOF
 EOF
 
     # docs 目录的 README
-    echo "# API 文档" > "$base_dir/api-super-${project_name}/docs/README.md"
-    echo "# 前端文档" > "$base_dir/fe-super-${project_name}/docs/README.md"
-    echo "# 测试文档" > "$base_dir/test-api-${project_name}/docs/README.md"
+    echo "# API 文档" > "$base_dir/api/docs/README.md"
+    echo "# 前端文档" > "$base_dir/fe/docs/README.md"
+    echo "# 测试文档" > "$base_dir/test-api/docs/README.md"
     
     # ai-generates 目录的 README
-    echo "# AI 生成的文档和代码" > "$base_dir/api-super-${project_name}/docs/ai-generates/README.md"
-    echo "# AI 生成的文档和代码" > "$base_dir/fe-super-${project_name}/docs/ai-generates/README.md"
-    echo "# AI 生成的测试文档" > "$base_dir/test-api-${project_name}/docs/ai-generates/README.md"
+    echo "# AI 生成的文档和代码" > "$base_dir/api/docs/ai-generates/README.md"
+    echo "# AI 生成的文档和代码" > "$base_dir/fe/docs/ai-generates/README.md"
+    echo "# AI 生成的测试文档" > "$base_dir/test-api/docs/ai-generates/README.md"
 }
 
 # 显示目录树
@@ -306,19 +306,19 @@ show_directory_tree() {
         echo "│   ├── README.md"
         echo "│   └── ai-generates/"
         echo "│       └── README.md"
-        echo "├── api-super-${project_name}/"
+        echo "├── api/"
         echo "│   ├── README.md"
         echo "│   └── docs/"
         echo "│       ├── README.md"
         echo "│       └── ai-generates/"
         echo "│           └── README.md"
-        echo "├── fe-super-${project_name}/"
+        echo "├── fe/"
         echo "│   ├── README.md"
         echo "│   └── docs/"
         echo "│       ├── README.md"
         echo "│       └── ai-generates/"
         echo "│           └── README.md"
-        echo "├── test-api-${project_name}/"
+        echo "├── test-api/"
         echo "│   ├── README.md"
         echo "│   └── docs/"
         echo "│       ├── README.md"
@@ -353,7 +353,7 @@ main() {
     local date_mmdd=$(date '+%m%d')
     
     # 确认信息
-    print_info "即将创建项目: super-project-${date_mmdd}-${project_name}"
+    print_info "即将创建项目: km-project-${date_mmdd}-${project_name}"
     echo -e "${YELLOW}确认创建? (Y/n):${NC}" >&2
     read -p "> " confirm
     
@@ -368,7 +368,7 @@ main() {
     create_directory_structure "$project_name"
     
     # 显示结果
-    show_directory_tree "super-project-${date_mmdd}-${project_name}" "$project_name"
+    show_directory_tree "km-project-${date_mmdd}-${project_name}" "$project_name"
 }
 
 # 运行主函数
